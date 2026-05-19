@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanks — Case study received</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,800;0,900;1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #0a3cff;
+      --cream: #f5f1e8;
+      --cream-card: #ffffff;
+      --ink: #0b0b0d;
+      --ink-soft: #3a3a3f;
+      --muted: #6a6a72;
+      --line-card: #e9e3d6;
+      --yellow: #ffd60a;
+      --yellow-deep: #f5c500;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    .hero {
+      background: var(--blue);
+      color: #fff;
+      padding: 4rem 1.5rem 5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+    }
+    .hero h1 em { font-style: italic; }
+    .hero .check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: #29d97a;
+      color: #fff;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 30px rgba(41, 217, 122, 0.4);
+    }
+    .hero p {
+      max-width: 540px;
+      margin: 1.5rem auto 0;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.92);
+    }
+    .page {
+      max-width: 640px;
+      margin: -2.5rem auto 4rem;
+      padding: 0 1.25rem;
+    }
+    .card {
+      background: var(--cream-card);
+      border: 1px solid var(--line-card);
+      border-radius: 18px;
+      padding: 2.25rem 2rem;
+      text-align: center;
+      box-shadow: 0 12px 40px -24px rgba(10,60,255,0.20);
+    }
+    .card h2 {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.015em;
+    }
+    .card p {
+      font-size: 0.96rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.75rem;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--yellow);
+      border: 2px solid var(--ink);
+      border-radius: 100px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--yellow-deep); transform: translateY(-1px); }
+    .sig {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--ink);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="check">✓</div>
+    <h1>Got it — <em>thank you</em></h1>
+    <p>Your case study is in. I'll read every submission personally and come back to you within a couple of weeks.</p>
+  </header>
+
+  <main class="page">
+    <div class="card">
+      <h2>What happens next</h2>
+      <p>If your case study looks like a strong fit, I'll be in touch to talk it through, agree consent, and figure out how to bring it into the book. If you flagged a follow-up conversation as OK, I might drop you a short list of questions first.</p>
+      <a href="/" class="btn">Submit another case study →</a>
+      <div class="sig">— Gerry Scullion</div>
+    </div>
+  </main>
+</body>
+</html>
