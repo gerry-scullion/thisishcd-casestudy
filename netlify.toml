@@ -1,19 +1,14 @@
-# Netlify config for the Case Study submission form
-# Drag-and-drop deploy: zip this folder and drop into app.netlify.com,
-# or connect the folder to a Git repo and point Netlify at it.
+# Netlify config for the Case Study submission form.
+# Static site, no build step. Deploy the WHOLE folder (all 4 files) —
+# index.html, success.html, netlify.toml, README.md.
 
 [build]
   publish = "."
 
-# Make sure the success page is served at /success
+# Friendly alias: /success serves the success page (success.html also
+# works directly). This is a rewrite, so the form's post-submission
+# redirect resolves whether Netlify "Pretty URLs" is on or off.
 [[redirects]]
   from = "/success"
   to = "/success.html"
   status = 200
-
-# Friendly 404 (falls back to the form)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
