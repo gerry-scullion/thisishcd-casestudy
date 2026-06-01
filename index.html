@@ -417,6 +417,22 @@
     .field textarea:invalid:not(:placeholder-shown) {
       border-color: var(--error);
     }
+
+    /* upload size warning */
+    .upload-error {
+      color: var(--error);
+      background: #fdecea;
+      border: 1px solid #f3c0ba;
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      text-align: left;
+      max-width: 540px;
+      margin: 0 auto 1.25rem;
+    }
+    .file-total { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; display: block; }
+    .file-total.over { color: var(--error); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -727,6 +743,7 @@
             <input type="file" id="photos" name="photos" accept="image/*" multiple />
           </label>
           <ul class="file-list" id="photo-list" hidden></ul>
+          <span class="file-total" id="upload-total"></span>
         </div>
 
         <div class="field">
@@ -868,13 +885,14 @@
 
         <div class="field">
           <label class="lbl" for="notes">Anything else?</label>
-          <textarea id="notes" name="notes" style="min-height: 100px;" placeholder="Optional — context, questions, or things you'd like Gerry to know."></textarea>
+          <textarea id="notes" name="notes" style="min-height: 100px;" placeholder="Optional — context, questions, or things you would like Gerry to know."></textarea>
         </div>
       </section>
 
       <!-- ============ SUBMIT ============ -->
       <div class="submit-card">
         <p>Thanks for taking the time. After you submit, I'll review every case study personally and come back to you within a couple of weeks.</p>
+        <p id="upload-error" class="upload-error" hidden></p>
         <button type="submit" class="btn">Submit case study <span class="arrow">→</span></button>
       </div>
     </form>
@@ -886,26 +904,80 @@
   </main>
 
   <script>
-    // Show selected file names under upload inputs
+    // Netlify rejects any form submission whose total payload exceeds 8 MB
+    // with a bare HTTP 400 (no message). The photos and PDF uploads share that
+    // budget, so a few phone photos can silently break the submission. We check
+    // the combined size up front and show a clear message instead of the 400.
+    const UPLOAD_LIMIT = 8 * 1024 * 1024;        // Netlify's hard cap
+    const UPLOAD_BUDGET = 7.5 * 1024 * 1024;     // safety margin for text fields + encoding
+    const UPLOAD_INPUTS = ['photos', 'existing_pdf'];
+
+    function fmtSize(bytes) {
+      const kb = bytes / 1024;
+      return kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : Math.max(1, Math.round(kb)) + ' KB';
+    }
+
+    function totalUploadBytes() {
+      return UPLOAD_INPUTS.reduce((sum, id) => {
+        const input = document.getElementById(id);
+        if (input && input.files) [...input.files].forEach(f => { sum += f.size; });
+        return sum;
+      }, 0);
+    }
+
+    // Show selected file names (and a running total) under upload inputs
     function wireFileList(inputId, listId) {
       const input = document.getElementById(inputId);
       const list = document.getElementById(listId);
       if (!input || !list) return;
       input.addEventListener('change', () => {
         list.innerHTML = '';
-        if (!input.files || input.files.length === 0) { list.hidden = true; return; }
+        if (!input.files || input.files.length === 0) { list.hidden = true; refreshTotal(); return; }
         list.hidden = false;
         [...input.files].forEach(f => {
           const li = document.createElement('li');
-          const kb = (f.size / 1024).toFixed(0);
-          const size = kb > 1024 ? (kb/1024).toFixed(1) + ' MB' : kb + ' KB';
-          li.textContent = f.name + ' — ' + size;
+          li.textContent = f.name + ' — ' + fmtSize(f.size);
           list.appendChild(li);
         });
+        refreshTotal();
       });
     }
+
+    // Live combined-total readout + clears/sets the error as files change
+    const errBox = document.getElementById('upload-error');
+    const totalReadout = document.getElementById('upload-total');
+    function refreshTotal() {
+      const total = totalUploadBytes();
+      if (totalReadout) {
+        if (total === 0) { totalReadout.textContent = ''; totalReadout.classList.remove('over'); }
+        else {
+          totalReadout.textContent = 'Total attached: ' + fmtSize(total) + ' of 8 MB allowed.';
+          totalReadout.classList.toggle('over', total > UPLOAD_BUDGET);
+        }
+      }
+      if (errBox && total <= UPLOAD_BUDGET) errBox.hidden = true;
+    }
+
     wireFileList('photos', 'photo-list');
     wireFileList('existing_pdf', 'pdf-list');
+
+    // Hard block before the submission ever reaches Netlify's 8 MB limit
+    const form = document.querySelector('form[name="case-study"]');
+    if (form && errBox) {
+      form.addEventListener('submit', (e) => {
+        const total = totalUploadBytes();
+        if (total > UPLOAD_BUDGET) {
+          e.preventDefault();
+          errBox.hidden = false;
+          errBox.innerHTML =
+            'Your attached files total <strong>' + fmtSize(total) + '</strong>, which is over the ' +
+            '8&nbsp;MB limit Netlify allows per submission — that’s what causes the error on submit. ' +
+            'Please attach fewer or smaller images, <strong>or</strong> remove the uploads and paste a ' +
+            'Dropbox / Google&nbsp;Drive link in the &ldquo;link to a folder&rdquo; field above instead.';
+          errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
   </script>
 </body>
 </html>
